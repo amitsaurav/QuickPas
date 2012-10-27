@@ -1,0 +1,29 @@
+body {
+	background-color: lightslategrey;
+}
+
+.container {
+	margin: 10px auto;
+	background-color: #ffffff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+h2 {
+	display: inline;
+	margin: 10px 0px;
+}
+
+.pull-right em {
+	line-height: 40px;
+}
+
+hr {
+	margin: 10px 0 20px 0;
+}
+
+.modal-text-input {
+	width: 97%;
+}

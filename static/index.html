@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QuickPAS</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <h2>QuickPAS</h2>
+      <div class="pull-right">
+        <em>Create products the 1-click way!</em>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="span8">
+          <a href="#add-new" role="button" class="btn btn-primary" data-toggle="modal">Add New</a>
+        </div>
+        <div class="span4">
+          <form class="form-search pull-right">
+            <div class="input-append">
+              <input type="text" class="span4 search-query">
+              <button type="submit" class="btn">Search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>ASIN</th>
+            <th>JSON Data</th>
+            <th>Date Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add New Modal -->
+    <div class="modal hide fade" id="add-new" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Add Product</h3>
+      </div>
+      <div class="modal-body">
+        <input id="product-asin" type="text" class="modal-text-input" placeholder="ASIN"></input>
+        <textarea id="product-data" rows="10" class="modal-text-input"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" id="create">Submit</button>
+      </div>
+    </div>
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/qp.js"></script>
+  </body>
+</html>

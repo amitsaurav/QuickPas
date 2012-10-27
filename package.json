@@ -1,0 +1,10 @@
+{
+  "name": "QuickPAS",
+  "description": "The 1-click way to create test products",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "mongoose": "3.x"
+  }
+}
