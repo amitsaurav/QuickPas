@@ -7,52 +7,91 @@ var app = express();
 mongoose.connect('mongodb://localhost/products');
 
 app.configure(function() {
-	app.use(express.bodyParser());
-	app.use(express.methodOverride());
-	app.use(app.router);
-	app.use(express.static(path.join(__dirname, "static")));
-	app.use(express.errorHandler({ dumpException: true, showStack: true }));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(path.join(__dirname, "static")));
+  app.use(express.errorHandler({ dumpException: true, showStack: true }));
 });
 
 var Schema = mongoose.Schema;
 var Product = new Schema({
-	asin: { type: String, required: true },
-	data: { type: String, required: true },
-	modified: {type: Date, default: Date.now}
+  asin: { type: String, required: true, index: { unique: true, dropDups: true }},
+  data: { type: String, required: true },
+  modified: {type: Date, default: Date.now}
 });
 var ProductModel = mongoose.model('Product', Product);
 
+/* Home page */
 app.get('/', function(req, res) {
-	res.sendfile(__dirname + '/static/index.html');
+  res.sendfile(__dirname + '/static/index.html');
 });
 
+/* Get all products */
 app.get('/products', function(req, res) {
-	return ProductModel.find(function(err, products) {
-		if (!err) {
-			return res.send(products);
-		} else {
-			return console.log(err);
-		}
-	});
-});
-
-app.post('/products', function (req, res){
-  var product;
-  console.log("POST: ");
-  console.log(req.body);
-  product = new ProductModel({
-    asin: req.body.asin,
-    data: req.body.data,
-  });
-  
-  product.save(function (err) {
+  return ProductModel.find(function(err, products) {
     if (!err) {
-      return console.log("created");
+      return res.send(products);
     } else {
       return console.log(err);
     }
   });
-  return res.send(product);
+});
+
+/* Get a single product */
+app.get('/products/:id', function (req, res){
+  return ProductModel.find({ asin: req.params.id }, 'asin data', function (err, product) {
+    if (!err) {
+      return res.send(product);
+    } else {
+      return console.log(err);
+    }
+  });
+});
+
+/* Add or edit a product */
+app.post('/products', function(req, res) {
+  ProductModel.find({ asin: req.body.asin }, 'asin data', function (err, products) {
+    var product = null;
+    if (products.length == 0) {
+      console.log("No products found, adding new...");
+      product = new ProductModel({
+        asin: req.body.asin,
+        data: req.body.data
+      });
+    } else {
+      console.log("No. of products found: " + products.length + ", updating...");
+      product = products[0];
+      product.asin = req.body.asin;
+      product.data = req.body.data;
+    }
+    
+    return product.save(function (err) {
+      if (!err) {
+        console.log("updated/created!");
+      } else {
+        console.log(err);
+      }
+      return res.send(product);
+    });
+  });
+});
+
+/* Delete a product */
+app.delete('/products/:id', function (req, res){
+  return ProductModel.find({ asin: req.params.id }, function (err, products) {
+    console.log("Found product: " + products.length);
+    if (products.length == 1) {
+      return products[0].remove(function (err) {
+        if (!err) {
+          console.log("removed");
+          return res.send('');
+        } else {
+          console.log(err);
+        }
+      });  
+    }
+  });
 });
 
 app.listen(3000);

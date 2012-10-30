@@ -14,7 +14,7 @@
       <hr>
       <div class="row">
         <div class="span8">
-          <a href="#add-new" role="button" class="btn btn-primary" data-toggle="modal">Add New</a>
+          <button id="add-new-product" class="btn btn-primary">Add New</button>
         </div>
         <div class="span4">
           <form class="form-search pull-right">
@@ -49,15 +49,29 @@
     <div class="modal hide fade" id="add-new" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>Add Product</h3>
+        <h3 id="add-modal-heading">Add Product</h3>
       </div>
       <div class="modal-body">
         <input id="product-asin" type="text" class="modal-text-input" placeholder="ASIN"></input>
-        <textarea id="product-data" rows="10" class="modal-text-input"></textarea>
+        <textarea id="product-data" rows="10" class="modal-text-input" placeholder="Product JSON"></textarea>
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary" id="create">Submit</button>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal hide fade" id="on-error" role="dailog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismess="modal" aria-hidden="true">×</button>
+        <h3>Error</h3>
+      </div>
+      <div class="modal-body" id="error-message">
+        Test message...
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
       </div>
     </div>
     <script src="js/jquery-1.8.2.min.js"></script>
