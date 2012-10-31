@@ -40,9 +40,9 @@ app.get('/products', function(req, res) {
 
 /* Get a single product */
 app.get('/products/:id', function (req, res){
-  return ProductModel.find({ asin: req.params.id }, 'asin data', function (err, product) {
-    if (!err) {
-      return res.send(product);
+  return ProductModel.find({ asin: req.params.id }, 'asin data', function (err, products) {
+    if (!err && products.length == 1) {
+      return res.send(products[0]);
     } else {
       return console.log(err);
     }
@@ -68,7 +68,7 @@ app.post('/products', function(req, res) {
     
     return product.save(function (err) {
       if (!err) {
-        console.log("updated/created!");
+        console.log("Done!");
       } else {
         console.log(err);
       }

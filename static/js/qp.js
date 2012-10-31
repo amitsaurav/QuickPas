@@ -30,15 +30,11 @@ $(document).ready(function() {
     $('#on-error').modal('toggle');
   };
 
-  var showEditDialog = function(products) {
-    if (products.length !== 1) {
-      showErrorDialog('There seems to be duplicate entries for this ASIN. Please fix it!');
-    } else {
-      $('#add-modal-heading').text('Edit Product');
-      $('#product-asin').val(products[0].asin);
-      $('#product-data').val(products[0].data);
-      $('#add-new').modal('toggle');
-    }
+  var showEditDialog = function(product) {
+    $('#add-modal-heading').text('Edit Product');
+    $('#product-asin').val(product.asin);
+    $('#product-data').val(product.data);
+    $('#add-new').modal('toggle');
   };
   
   var editAsin = function () {
