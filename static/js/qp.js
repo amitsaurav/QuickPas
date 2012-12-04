@@ -9,6 +9,7 @@ $(document).ready(function() {
         tableBody += '<td>' + data[i].asin + '</td>';
         tableBody += '<td>' + data[i].data + '</td>'; // truncate and add ellipses
         tableBody += '<td>' + data[i].modified + '</td>';
+        tableBody += '<td>' + data[i].owner + '</td>';
         tableBody += '<td>';
         tableBody += '<button class="btn btn-success btn-small edit-asin">Edit</button>&nbsp;';
         tableBody += '<button class="btn btn-danger btn-small delete-asin">Delete</button></td>';
@@ -16,7 +17,7 @@ $(document).ready(function() {
       }
 
       if (tableBody === '') {
-        $('#table-body').empty().append('<tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>');
+        $('#table-body').empty().append('<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>');
       } else {
         $('#table-body').empty().append(tableBody);
         $('.edit-asin').click(editAsin);
@@ -34,6 +35,7 @@ $(document).ready(function() {
     $('#add-modal-heading').text('Edit Product');
     $('#product-asin').val(product.asin);
     $('#product-data').val(product.data);
+    $('#product-owner').val(product.owner);
     $('#add-new').modal('toggle');
   };
   
@@ -64,7 +66,8 @@ $(document).ready(function() {
       type: 'POST',
       data: {
         asin: asin,
-        data: $('#product-data').val()
+        data: $('#product-data').val(),
+        owner: $('#product-owner').val()
       },
       success: function() {
         $('#add-new').modal('toggle');
@@ -77,6 +80,7 @@ $(document).ready(function() {
     $('#add-modal-heading').text('Add Product');
     $('#product-asin').val('');
     $('#product-data').val('');
+    $('#product-owner').val('');
 
     $('#add-new').modal('toggle');
   });

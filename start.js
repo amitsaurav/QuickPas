@@ -18,7 +18,8 @@ var Schema = mongoose.Schema;
 var Product = new Schema({
   asin: { type: String, required: true, index: { unique: true, dropDups: true }},
   data: { type: String, required: true },
-  modified: {type: Date, default: Date.now}
+  modified: {type: Date, default: Date.now},
+  owner: { type: String, required: true }
 });
 var ProductModel = mongoose.model('Product', Product);
 
@@ -40,7 +41,7 @@ app.get('/products', function(req, res) {
 
 /* Get a single product */
 app.get('/products/:id', function (req, res){
-  return ProductModel.find({ asin: req.params.id }, 'asin data', function (err, products) {
+  return ProductModel.find({ asin: req.params.id }, 'asin data owner', function (err, products) {
     if (!err && products.length == 1) {
       return res.send(products[0]);
     } else {
@@ -57,13 +58,15 @@ app.post('/products', function(req, res) {
       console.log("No products found, adding new...");
       product = new ProductModel({
         asin: req.body.asin,
-        data: req.body.data
+        data: req.body.data,
+        owner: req.body.owner
       });
     } else {
       console.log("No. of products found: " + products.length + ", updating...");
       product = products[0];
       product.asin = req.body.asin;
       product.data = req.body.data;
+      product.owner = req.body.owner;
     }
     
     return product.save(function (err) {
