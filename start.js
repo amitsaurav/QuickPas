@@ -46,7 +46,8 @@ app.get('/products/:id', function (req, res){
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
     } else {
-      return console.log(err);
+      console.log(err);
+      return res.send('{}');
     }
   });
 });
@@ -90,11 +91,14 @@ app.delete('/products/:id', function (req, res){
       return products[0].remove(function (err) {
         if (!err) {
           console.log("removed");
-          return res.send('');
+          return res.send('{}');
         } else {
           console.log(err);
+          return res.send('{}');
         }
       });  
+    } else {
+      return res.send('{}');
     }
   });
 });
