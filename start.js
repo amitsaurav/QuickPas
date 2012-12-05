@@ -32,6 +32,7 @@ app.get('/', function(req, res) {
 app.get('/products', function(req, res) {
   return ProductModel.find(function(err, products) {
     if (!err) {
+      console.log('Returning ' + products.length + ' products...');
       return res.send(products);
     } else {
       return console.log(err);
