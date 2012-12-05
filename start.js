@@ -72,10 +72,11 @@ app.post('/products', function(req, res) {
     return product.save(function (err) {
       if (!err) {
         console.log("Done!");
+        return res.send(product);
       } else {
         console.log(err);
+        return res.send(err);
       }
-      return res.send(product);
     });
   });
 });

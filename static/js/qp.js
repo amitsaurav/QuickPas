@@ -27,7 +27,7 @@ $(document).ready(function() {
   };
 
   var showErrorDialog = function(msg) {
-    $('#error-message').text(msg);
+    $('#error-message').html(msg);
     $('#on-error').modal('toggle');
   };
 
@@ -59,6 +59,15 @@ $(document).ready(function() {
     });
   };
 
+  var getErrorMessage = function (errorObject) {
+    var msg = '<ul>';
+    for (err in errorObject) {
+      msg += '<li>' + errorObject[err].message + '</li>';
+    }
+    msg += '</ul>';
+    return msg;
+  };
+
   $('#create').click(function() {
     var asin = $('#product-asin').val();
     $.ajax({
@@ -69,9 +78,17 @@ $(document).ready(function() {
         data: $('#product-data').val(),
         owner: $('#product-owner').val()
       },
-      success: function() {
+      success: function(product) {
         $('#add-new').modal('toggle');
-        fetchAndRefreshTable();
+        if (product.message && product.errors) {
+          showErrorDialog('Encountered the following error: <br/>' + getErrorMessage(product.errors));
+        } else {
+          fetchAndRefreshTable();
+        }
+      },
+      error: function() {
+        $('#add-new').modal('toggle');
+        showErrorDialog('There was an error adding product!');
       }
     });
   });
