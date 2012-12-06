@@ -23,6 +23,14 @@ var Product = new Schema({
 });
 var ProductModel = mongoose.model('Product', Product);
 
+var logAndReportMessage = function(msg, res) {
+  console.log(msg);
+
+  var response = {};
+  response.msg = msg;
+  return res.send(response);
+};
+
 /* Home page */
 app.get('/', function(req, res) {
   res.sendfile(__dirname + '/static/index.html');
@@ -35,7 +43,7 @@ app.get('/products', function(req, res) {
       console.log('Returning ' + products.length + ' products...');
       return res.send(products);
     } else {
-      return console.log('Error querying all products: ' + err);
+      return logAndReportMessage('Error querying all products: ' + err, res);
     }
   });
 });
@@ -47,15 +55,14 @@ app.get('/products/:id', function (req, res){
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
     } else {
-      console.log('Error returning product for asin: ' + req.params.id);
-      return res.send('{}');
+      return logAndReportMessage('Error returning product for asin: ' + req.params.id, res);
     }
   });
 });
 
 /* Add or edit a product */
 app.post('/products', function(req, res) {
-  ProductModel.find({ asin: req.body.asin }, 'asin data', function (err, products) {
+  ProductModel.find({ asin: req.body.asin }, 'asin data owner', function (err, products) {
     var product = null;
     if (products.length == 0) {
       console.log("No products found, adding new...");
@@ -74,11 +81,9 @@ app.post('/products', function(req, res) {
     
     return product.save(function (err) {
       if (!err) {
-        console.log("Done!");
-        return res.send(product);
+        return logAndReportMessage('Updated product with asin: ' + req.body.asin, res);
       } else {
-        console.log('Error updating product: ' + err);
-        return res.send(err);
+        return logAndReportMessage('Error updating asin: ' + req.body.asin, res);
       }
     });
   });
@@ -87,19 +92,16 @@ app.post('/products', function(req, res) {
 /* Delete a product */
 app.delete('/products/:id', function (req, res){
   return ProductModel.find({ asin: req.params.id }, function (err, products) {
-    console.log("Found product: " + products.length);
     if (products.length == 1) {
       return products[0].remove(function (err) {
         if (!err) {
-          console.log('Deleted product with asin: ' + req.params.id);
-          return res.send('{}');
+          return console.log('Deleted product with asin: ' + req.params.id);
         } else {
-          console.log('Error deleting product with asin: ' + req.params.id);
-          return res.send('{}');
+          return logAndReportMessage('Error deleting product with asin: ' + req.params.id, res);
         }
       });  
     } else {
-      return res.send('{}');
+      return logAndReportMessage('Asin not found: ' + req.params.id, res);
     }
   });
 });

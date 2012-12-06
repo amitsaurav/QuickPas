@@ -1,11 +1,11 @@
 $(document).ready(function() {
 
   var getTruncatedJson = function(productJson) {
-    if (productJson.length <= 20) {
+    var jsonLengthToDisplay = 25;
+    if (productJson.length <= jsonLengthToDisplay) {
       return productJson;
-    }
-    else {
-      return productJson.substring(0, 20) + ' ...';
+    } else {
+      return productJson.substring(0, jsonLengthToDisplay) + '...';
     }
   };
 
@@ -35,6 +35,13 @@ $(document).ready(function() {
         $('.delete-asin').click(deleteAsin);
       }
     });
+  };
+
+  var handleActionResponse= function (response) {
+    if (response.msg) {
+      showErrorDialog(response.msg);
+    }
+    fetchAndRefreshTable();
   };
 
   var showErrorDialog = function(msg, heading) {
@@ -82,18 +89,9 @@ $(document).ready(function() {
     $.ajax({
       type: 'DELETE',
       url: '/products/' + asin,
-      success: fetchAndRefreshTable,
-      error: showErrorDialog
+      success: handleActionResponse,
+      error: handleActionResponse
     });
-  };
-
-  var getErrorMessage = function (errorObject) {
-    var msg = '<ul>';
-    for (err in errorObject) {
-      msg += '<li>' + errorObject[err].message + '</li>';
-    }
-    msg += '</ul>';
-    return msg;
   };
 
   $('#create').click(function() {
@@ -108,15 +106,11 @@ $(document).ready(function() {
       },
       success: function(product) {
         $('#add-new').modal('toggle');
-        if (product.message && product.errors) {
-          showErrorDialog('Encountered the following error: <br/>' + getErrorMessage(product.errors));
-        } else {
-          fetchAndRefreshTable();
-        }
+        handleActionResponse(product);
       },
-      error: function() {
+      error: function(response) {
         $('#add-new').modal('toggle');
-        showErrorDialog('There was an error adding product!');
+        handleActionResponse(response);
       }
     });
   });
