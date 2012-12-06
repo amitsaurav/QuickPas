@@ -20,8 +20,7 @@ $(document).ready(function() {
         tableBody += '<td>' + data[i].modified + '</td>';
         tableBody += '<td>' + data[i].owner + '</td>';
         tableBody += '<td>';
-        tableBody += '<button class="btn btn-primary btn-small view-asin">View JSON</button>&nbsp;';
-        tableBody += '<button class="btn btn-success btn-small edit-asin">Edit</button>&nbsp;';
+        tableBody += '<button class="btn btn-success btn-small edit-asin">View/Edit</button>&nbsp;';
         tableBody += '<button class="btn btn-danger btn-small delete-asin">Delete</button></td>';
         tableBody += '</tr>';
       }
@@ -30,7 +29,6 @@ $(document).ready(function() {
         $('#table-body').empty().append('<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>');
       } else {
         $('#table-body').empty().append(tableBody);
-        $('.view-asin').click(viewAsin);
         $('.edit-asin').click(editAsin);
         $('.delete-asin').click(deleteAsin);
       }
@@ -38,18 +36,13 @@ $(document).ready(function() {
   };
 
   var handleActionResponse= function (response) {
-    if (response.msg) {
+    if (response.msg && !response.success) {
       showErrorDialog(response.msg);
     }
     fetchAndRefreshTable();
   };
 
-  var showErrorDialog = function(msg, heading) {
-    if (typeof heading !== undefined) {
-      $('#error-heading').html(heading);
-    } else {
-      $('#error-heading').html('Error');
-    }
+  var showErrorDialog = function(msg) {
     $('#error-message').html(msg);
     $('#on-error').modal('toggle');
   };
@@ -60,18 +53,6 @@ $(document).ready(function() {
     $('#product-data').val(product.data);
     $('#product-owner').val(product.owner);
     $('#add-new').modal('toggle');
-  };
-  
-  var viewAsin = function () {
-    var asin = $(this).parent().siblings(":first").text();
-    $.ajax({
-      type: 'GET',
-      url: '/products/' + asin,
-      success: function(data) {
-        showErrorDialog(data.data, 'JSON');
-      },
-      error: showErrorDialog
-    });
   };
 
   var editAsin = function () {

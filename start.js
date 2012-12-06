@@ -23,10 +23,15 @@ var Product = new Schema({
 });
 var ProductModel = mongoose.model('Product', Product);
 
-var logAndReportMessage = function(msg, res) {
+var logAndReportMessage = function(msg, res, success) {
   console.log(msg);
 
   var response = {};
+  if (success) {
+    response.success = success;
+  } else {
+    response.success = false;
+  }
   response.msg = msg;
   return res.send(response);
 };
@@ -81,7 +86,7 @@ app.post('/products', function(req, res) {
     
     return product.save(function (err) {
       if (!err) {
-        return logAndReportMessage('Updated product with asin: ' + req.body.asin, res);
+        return logAndReportMessage('Updated product with asin: ' + req.body.asin, res, true);
       } else {
         return logAndReportMessage('Error updating asin: ' + req.body.asin, res);
       }
@@ -95,7 +100,7 @@ app.delete('/products/:id', function (req, res){
     if (products.length == 1) {
       return products[0].remove(function (err) {
         if (!err) {
-          return console.log('Deleted product with asin: ' + req.params.id);
+          return logAndReportMessage('Deleted product with asin: ' + req.params.id, res, true);
         } else {
           return logAndReportMessage('Error deleting product with asin: ' + req.params.id, res);
         }
