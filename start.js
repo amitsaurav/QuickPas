@@ -35,7 +35,7 @@ app.get('/products', function(req, res) {
       console.log('Returning ' + products.length + ' products...');
       return res.send(products);
     } else {
-      return console.log(err);
+      return console.log('Error querying all products: ' + err);
     }
   });
 });
@@ -47,7 +47,7 @@ app.get('/products/:id', function (req, res){
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
     } else {
-      console.log(err);
+      console.log('Error returning product for asin: ' + req.params.id);
       return res.send('{}');
     }
   });
@@ -77,7 +77,7 @@ app.post('/products', function(req, res) {
         console.log("Done!");
         return res.send(product);
       } else {
-        console.log(err);
+        console.log('Error updating product: ' + err);
         return res.send(err);
       }
     });
@@ -91,10 +91,10 @@ app.delete('/products/:id', function (req, res){
     if (products.length == 1) {
       return products[0].remove(function (err) {
         if (!err) {
-          console.log("removed");
+          console.log('Deleted product with asin: ' + req.params.id);
           return res.send('{}');
         } else {
-          console.log(err);
+          console.log('Error deleting product with asin: ' + req.params.id);
           return res.send('{}');
         }
       });  
