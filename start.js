@@ -65,30 +65,49 @@ app.get('/products/:id', function (req, res){
   });
 });
 
-/* Add or edit a product */
+/* Add a product */
 app.post('/products', function(req, res) {
   ProductModel.find({ asin: req.body.asin }, 'asin data owner', function (err, products) {
     var product = null;
-    if (products.length == 0) {
-      console.log("No products found, adding new...");
-      product = new ProductModel({
-        asin: req.body.asin,
-        data: req.body.data,
-        owner: req.body.owner
-      });
-    } else {
-      console.log("No. of products found: " + products.length + ", updating...");
-      product = products[0];
-      product.asin = req.body.asin;
-      product.data = req.body.data;
-      product.owner = req.body.owner;
+    if (products.length != 0) {
+      return logAndReportMessage('ASIN already exists! Cannot create new: ' + req.body.asin, res);
     }
+    
+    console.log("No products found, adding new asin: " + req.body.asin);
+    product = new ProductModel({
+      asin: req.body.asin,
+      data: req.body.data,
+      owner: req.body.owner
+    });
     
     return product.save(function (err) {
       if (!err) {
-        return logAndReportMessage('Updated product with asin: ' + req.body.asin, res, true);
+        return logAndReportMessage('Created new product with asin: ' + req.body.asin, res, true);
       } else {
-        return logAndReportMessage('Error updating asin: ' + req.body.asin, res);
+        return logAndReportMessage('Error creating asin: ' + req.body.asin, res);
+      }
+    });
+  });
+});
+
+/* Update a product */
+app.put('/products/:id', function(req, res) {
+  ProductModel.find({ asin: req.params.id }, 'asin data owner', function (err, products) {
+    var product = null;
+    if (products.length == 0) {
+      return logAndReportMessage('ASIN not found!  Cannot edit: ' + req.params.id, res);
+    } 
+
+    console.log('ASIN found! Editing: ' + req.params.id);
+    product = products[0];
+    product.data = req.body.data;
+    product.owner = req.body.owner;
+    
+    return product.save(function (err) {
+      if (!err) {
+        return logAndReportMessage('Updated product with asin: ' + req.params.id, res, true);
+      } else {
+        return logAndReportMessage('Error updating asin: ' + req.params.id, res);
       }
     });
   });

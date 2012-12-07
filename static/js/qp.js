@@ -36,6 +36,7 @@ $(document).ready(function() {
   };
 
   var handleActionResponse= function (response) {
+    $('.modal').modal('hide');
     if (response.msg && !response.success) {
       showErrorDialog(response.msg);
     }
@@ -49,9 +50,10 @@ $(document).ready(function() {
 
   var showEditDialog = function(product) {
     $('#add-modal-heading').text('Edit Product');
-    $('#product-asin').val(product.asin);
+    $('#product-asin').val(product.asin).attr('readonly', 'true');
     $('#product-data').val(product.data);
     $('#product-owner').val(product.owner);
+    $('#create').unbind('click').click(updateAsin);
     $('#add-new').modal('toggle');
   };
 
@@ -75,7 +77,21 @@ $(document).ready(function() {
     });
   };
 
-  $('#create').click(function() {
+  var updateAsin = function () {
+    var asin = $('#product-asin').val();
+    $.ajax({
+      url: '/products/' + asin,
+      type: 'PUT',
+      data: {
+        data: $('#product-data').val(),
+        owner: $('#product-owner').val()
+      },
+      success: handleActionResponse,
+      error: handleActionResponse
+    });
+  };
+
+  var addAsin = function () {
     var asin = $('#product-asin').val();
     $.ajax({
       url: '/products',
@@ -85,23 +101,17 @@ $(document).ready(function() {
         data: $('#product-data').val(),
         owner: $('#product-owner').val()
       },
-      success: function(product) {
-        $('#add-new').modal('toggle');
-        handleActionResponse(product);
-      },
-      error: function(response) {
-        $('#add-new').modal('toggle');
-        handleActionResponse(response);
-      }
+      success: handleActionResponse,
+      error: handleActionResponse
     });
-  });
+  };
 
   $('#add-new-product').click(function() {
     $('#add-modal-heading').text('Add Product');
-    $('#product-asin').val('');
+    $('#product-asin').val('').removeAttr('readonly');
     $('#product-data').val('');
     $('#product-owner').val('');
-
+    $('#create').unbind('click').click(addAsin);
     $('#add-new').modal('toggle');
   });
 
