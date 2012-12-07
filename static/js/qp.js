@@ -53,7 +53,7 @@ $(document).ready(function() {
     $('#product-asin').val(product.asin).attr('readonly', 'true');
     $('#product-data').val(product.data);
     $('#product-owner').val(product.owner);
-    $('#create').unbind('click').click(updateAsin);
+    $('#create').unbind('click').click({methodType: 'PUT'}, addOrUpdateAsin);
     $('#add-new').modal('toggle');
   };
 
@@ -77,25 +77,21 @@ $(document).ready(function() {
     });
   };
 
-  var updateAsin = function () {
+  var addOrUpdateAsin = function (event) {
     var asin = $('#product-asin').val();
-    $.ajax({
-      url: '/products/' + asin,
-      type: 'PUT',
-      data: {
-        data: $('#product-data').val(),
-        owner: $('#product-owner').val()
-      },
-      success: handleActionResponse,
-      error: handleActionResponse
-    });
-  };
+    var targetUrl = '/products';
+    if (event.data.methodType === 'PUT') {
+      targetUrl += '/' + asin;
+    } else if (event.data.methodType !== 'POST') {
+      var response = {}; // Create method to return response object given a message
+      response.success = false;
+      response.msg = 'Invalid method!';
+      return handleActionResponse(response);
+    }
 
-  var addAsin = function () {
-    var asin = $('#product-asin').val();
     $.ajax({
-      url: '/products',
-      type: 'POST',
+      url: targetUrl,
+      type: event.data.methodType,
       data: {
         asin: asin,
         data: $('#product-data').val(),
@@ -111,7 +107,7 @@ $(document).ready(function() {
     $('#product-asin').val('').removeAttr('readonly');
     $('#product-data').val('');
     $('#product-owner').val('');
-    $('#create').unbind('click').click(addAsin);
+    $('#create').unbind('click').click({methodType: 'POST'}, addOrUpdateAsin);
     $('#add-new').modal('toggle');
   });
 
