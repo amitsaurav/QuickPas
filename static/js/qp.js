@@ -78,7 +78,7 @@ $(document).ready(function() {
   };
 
   var addOrUpdateAsin = function (event) {
-    var asin = $('#product-asin').val();
+    var asin = $('#product-asin').val().trim();
     var targetUrl = '/products';
     if (event.data.methodType === 'PUT') {
       targetUrl += '/' + asin;

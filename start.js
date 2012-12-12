@@ -55,7 +55,7 @@ app.get('/products', function(req, res) {
 
 /* Get a single product */
 app.get('/products/:id', function (req, res){
-  return ProductModel.find({ asin: req.params.id }, 'asin data owner', function (err, products) {
+  return ProductModel.find({ asin: req.params.id }, 'asin data owner modified', function (err, products) {
     if (!err && products.length == 1) {
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
