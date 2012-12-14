@@ -60,7 +60,7 @@ app.get('/products/:id', function (req, res){
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
     } else {
-      return logAndReportMessage('Error returning product for asin: ' + req.params.id, res);
+      return logAndReportMessage('Error returning product for asin: ' + req.params.id + ': ' + err, res);
     }
   });
 });
@@ -84,7 +84,7 @@ app.post('/products', function(req, res) {
       if (!err) {
         return logAndReportMessage('Created new product with asin: ' + req.body.asin, res, true);
       } else {
-        return logAndReportMessage('Error creating asin: ' + req.body.asin, res);
+        return logAndReportMessage('Error creating asin: ' + req.body.asin + ': ' + err, res);
       }
     });
   });
@@ -102,12 +102,13 @@ app.put('/products/:id', function(req, res) {
     product = products[0];
     product.data = req.body.data;
     product.owner = req.body.owner;
+    product.modified = new Date;
     
     return product.save(function (err) {
       if (!err) {
         return logAndReportMessage('Updated product with asin: ' + req.params.id, res, true);
       } else {
-        return logAndReportMessage('Error updating asin: ' + req.params.id, res);
+        return logAndReportMessage('Error updating asin: ' + req.params.id + ': ' + err, res);
       }
     });
   });
@@ -121,7 +122,7 @@ app.delete('/products/:id', function (req, res){
         if (!err) {
           return logAndReportMessage('Deleted product with asin: ' + req.params.id, res, true);
         } else {
-          return logAndReportMessage('Error deleting product with asin: ' + req.params.id, res);
+          return logAndReportMessage('Error deleting product with asin: ' + req.params.id + ': ' + err, res);
         }
       });  
     } else {
