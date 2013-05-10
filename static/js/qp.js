@@ -1,6 +1,10 @@
 $(document).ready(function() {
 
   var getTruncatedJson = function(productJson) {
+    if (productJson === undefined || productJson === null || productJson.length === 0) {
+      return '...';
+    }
+
     var jsonLengthToDisplay = 25;
     if (productJson.length <= jsonLengthToDisplay) {
       return productJson;
@@ -17,6 +21,7 @@ $(document).ready(function() {
         tableBody += '<tr>';
         tableBody += '<td>' + data[i].asin + '</td>';
         tableBody += '<td>' + getTruncatedJson(data[i].data) + '</td>';
+        tableBody += '<td>' + getTruncatedJson(data[i].ion) + '</td>';
         tableBody += '<td>' + data[i].modified + '</td>';
         tableBody += '<td>' + data[i].owner + '</td>';
         tableBody += '<td>';
@@ -26,7 +31,7 @@ $(document).ready(function() {
       }
 
       if (tableBody === '') {
-        $('#table-body').empty().append('<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>');
+        $('#table-body').empty().append('<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>');
       } else {
         $('#table-body').empty().append(tableBody);
         $('.edit-asin').click(editAsin);
@@ -52,6 +57,7 @@ $(document).ready(function() {
     $('#add-modal-heading').text('Edit Product');
     $('#product-asin').val(product.asin).attr('readonly', 'true');
     $('#product-data').val(product.data);
+    $('#product-ion').val(product.ion);
     $('#product-owner').val(product.owner);
     $('#create').unbind('click').click({methodType: 'PUT'}, addOrUpdateAsin);
     $('#add-new').modal('toggle');
@@ -61,7 +67,7 @@ $(document).ready(function() {
     var asin = $(this).parent().siblings(":first").text();
     $.ajax({
       type: 'GET',
-      url: '/products/' + asin,
+      url: '/products/' + asin + '?ion=1',
       success: showEditDialog,
       error: showErrorDialog
     });
@@ -95,6 +101,7 @@ $(document).ready(function() {
       data: {
         asin: asin,
         data: $('#product-data').val(),
+        ion: $('#product-ion').val(),
         owner: $('#product-owner').val()
       },
       success: handleActionResponse,
@@ -106,6 +113,7 @@ $(document).ready(function() {
     $('#add-modal-heading').text('Add Product');
     $('#product-asin').val('').removeAttr('readonly');
     $('#product-data').val('');
+    $('#product-ion').val('');
     $('#product-owner').val('');
     $('#create').unbind('click').click({methodType: 'POST'}, addOrUpdateAsin);
     $('#add-new').modal('toggle');

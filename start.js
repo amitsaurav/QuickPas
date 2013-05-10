@@ -18,6 +18,7 @@ var Schema = mongoose.Schema;
 var Product = new Schema({
   asin: { type: String, required: true, index: { unique: true, dropDups: true }},
   data: { type: String, required: true },
+  ion: { type: String },
   modified: {type: Date, default: Date.now},
   owner: { type: String, required: true }
 });
@@ -55,7 +56,12 @@ app.get('/products', function(req, res) {
 
 /* Get a single product */
 app.get('/products/:id', function (req, res){
-  return ProductModel.find({ asin: req.params.id }, 'asin data owner modified', function (err, products) {
+  var dataString = 'data';
+  if (req.query['ion'] == 1) {
+    dataString += ' ion'
+  }
+
+  return ProductModel.find({ asin: req.params.id }, 'asin ' + dataString + ' owner modified', function (err, products) {
     if (!err && products.length == 1) {
       console.log('Returning 1 product with ASIN: ' + products[0].asin);
       return res.send(products[0]);
@@ -77,6 +83,7 @@ app.post('/products', function(req, res) {
     product = new ProductModel({
       asin: req.body.asin,
       data: req.body.data,
+      ion: req.body.ion,
       owner: req.body.owner
     });
     
@@ -101,6 +108,7 @@ app.put('/products/:id', function(req, res) {
     console.log('ASIN found! Editing: ' + req.params.id);
     product = products[0];
     product.data = req.body.data;
+    product.ion = req.body.ion;
     product.owner = req.body.owner;
     product.modified = new Date;
     
