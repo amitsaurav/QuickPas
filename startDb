@@ -1,0 +1,1 @@
+sudo /usr/bin/mongod --dbpath ./db --smallfiles >> /var/log/mongodb.log &
